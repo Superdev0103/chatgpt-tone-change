@@ -3,17 +3,16 @@ import React, { useState, useRef, useEffect } from 'react'
 import ChatMessage from './ChatMessage';
 import Thinking from './Thinking';
 import useDarkMode from '../hooks/useDarkMode';
-import { Select } from 'antd';
+import { Checkbox } from 'antd';
 import { BASE_URL, headerDescription, toneList } from '../config/constant';
 import axios from 'axios';
-const { Option } = Select;
 
 const ChatViewSample = () => {
     const [, setDarkTheme] = useDarkMode();
     const messagesEndRef = useRef();
     const [formValue, setFormValue] = useState('');
     const [thinking, setThinking] = useState(false);
-    const [toneValue, setToneValue] = useState([]);
+    const [toneValue, setToneValue] = useState(toneList.map(() => {return false}));
     const [chatContent, setChatContent] = useState([{
         id: 1,
         text: '**Hello!** *How can I help you today?*',
@@ -81,7 +80,8 @@ const ChatViewSample = () => {
                     text: '**Hello!** *How can I help you today?*',
                     ai: true
                 }]);
-                setToneValue([]);
+                const tmp = toneList.map(() => {return false});
+                setToneValue(tmp);
             } else {
                 sendMessage();
             }
@@ -92,17 +92,26 @@ const ChatViewSample = () => {
         if (e.keyCode === 13 && e.shiftKey === false) {
             setFormValue("");
             setInputTone("");
-            setToneValue([]);
+            const tmp = toneList.map(() => {return false});
+            setToneValue(tmp);
         }
     }
 
     const handleToneChange = (e) => {
-        setToneValue(e);
+        const temp = toneValue.map((item, index) => {
+            if (e === index) return !item;
+            else return item;
+        });
+        setToneValue(temp);
         let variable = '';
-        if (e.length !== 0) {
+        if (temp.filter(item => item === true).length > 0) {
             variable = headerDescription + '\n';
-            e.forEach((item, index) => {
-                variable += index + 1 + ') ' +item + '\n';
+            let num = 1
+            temp.forEach((item, index) => {
+                if (item) {
+                    variable += num + ') ' + toneList[index].description + '\n';
+                    num ++;
+                }
             });
             if (inputTone === '') {
                 if (formValue === '') {
@@ -132,35 +141,50 @@ const ChatViewSample = () => {
 
     return (
         <div className="chatview">
-        <main className='chatview__chatarea'>
+            <main className='chatview__chatarea'>
 
-        {
-            chatContent.map((message, index) => (
-                <ChatMessage key={index} message={{ ...message }} />
-            ))
-        }
+            {
+                chatContent.map((message, index) => (
+                    <ChatMessage key={index} message={{ ...message }} />
+                ))
+            }
 
-            {thinking && <Thinking />}
+                {thinking && <Thinking />}
 
-            <span ref={messagesEndRef}></span>
-        </main>
-        <div className='form'>
-            <Select
-                mode="multiple"
-                maxTagCount='responsive'
-                className='tone-select'
-                placeholder="tone"
-                size='large'
-                style={{width:"300px"}}
-                value={toneValue}
-                onChange={handleToneChange}
-            >
-                {
-                    toneList.map((item, index) => (<Option key={index} value={item.description}>{item.tone}</Option>))
-                }
-            </Select>
-            <textarea className='chatview__textarea-message' value={formValue} onChange={(e) => setFormValue(e.target.value)} onKeyDown={(e) => handleKeyDown(e)} onKeyUp={(e) => handleKeyUp(e)} />
-        </div>
+                <span ref={messagesEndRef}></span>
+            </main>
+            <div className='form'>
+                {/* <Select
+                    mode="multiple"
+                    maxTagCount='responsive'
+                    className='tone-select'
+                    placeholder="tone"
+                    size='large'
+                    style={{width:"300px"}}
+                    value={toneValue}
+                    onChange={handleToneChange}
+                >
+                    {
+                        toneList.map((item, index) => (<Option key={index} value={item.description}>{item.tone}</Option>))
+                    }
+                </Select> */}
+                <div className='flex flex-wrap mb-4 ml-2 mr-4 self-center'>
+                    {
+                        toneList.map((item, index) => (
+                            <Checkbox
+                                className='text-2xl text-white ml-2 items-center hover:text-slate-400 transition-colors duration-200 tone-checkbox'
+                                key={index}
+                                value={item.description}
+                                checked={toneValue[index]}
+                                onChange={() => handleToneChange(index)}
+                            >
+                                {item.tone}
+                            </Checkbox>
+                        ))
+                    }
+                </div>
+                <textarea className='chatview__textarea-message' value={formValue} onChange={(e) => setFormValue(e.target.value)} onKeyDown={(e) => handleKeyDown(e)} onKeyUp={(e) => handleKeyUp(e)} />
+            </div>
         </div>
     )
 }

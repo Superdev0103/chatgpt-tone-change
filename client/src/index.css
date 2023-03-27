@@ -11,6 +11,10 @@
   padding: 0;
 }
 
+body {
+  font-family: Söhne,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,sans-serif,Helvetica Neue,Arial,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol,Noto Color Emoji
+}
+
 @layer components {
 
   /* SideBar */
@@ -75,11 +79,11 @@
   }
 
   .chatview__chatarea {
-    @apply h-[80vh] w-full overflow-y-scroll flex flex-col m-2;
+    @apply h-[74vh] max-md:h-[70vh] w-full overflow-y-scroll flex flex-col m-2;
   }
   
   .form{
-    @apply flex justify-between flex-col items-stretch sm:flex-row pl-24 pr-24 absolute bottom-0 left-0 right-0 mb-4
+    @apply flex justify-between flex-col items-stretch sm:flex-col pl-24 pr-24 absolute bottom-0 left-0 right-0 mb-8
     text-black dark:text-white duration-500;
   }
 
@@ -95,11 +99,12 @@
   }
 
   .chatview__textarea-message{
-    @apply text-xl bg-transparent h-16 sm:w-screen max-h-[20rem] min-h-[4rem] p-2 dark:bg-light-grey pt-4
+    @apply text-xl bg-transparent h-32 sm:w-screen max-h-32 min-h-[4rem] p-2 dark:bg-light-grey pt-4
     border border-light-grey dark:border-dark-grey overflow-y-hidden mx-2
     resize-y rounded-xl;
     overflow-y: scroll;
     scrollbar-width: 8px;
+    width: inherit;
   } 
   .chatview__textarea-message::-webkit-scrollbar {
     width: 8px;
